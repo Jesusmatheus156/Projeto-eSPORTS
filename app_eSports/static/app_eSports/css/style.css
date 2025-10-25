@@ -1,0 +1,392 @@
+/* app_eSports/static/app_eSports/css/style.css */
+
+/* =================================
+   VARIÁVEIS DE DESIGN
+   ================================= */
+:root {
+    --cor-fundo-escuro: #0a1128;
+    --cor-fundo-medio: #0e1a40;
+    --cor-dourado-brilhante: #f7b733;
+    --cor-dourado-sombra: #e69a00;
+    --cor-amarelo-hover: #FFCC00; /* Cor solicitada */
+    --cor-ciano-brilhante: #4affde;
+    --cor-texto-principal: #f0f6fc;
+    --cor-texto-secundario: #a7b0b8;
+
+    --fonte-titulos: 'Jaro', sans-serif;
+    --fonte-corpo: 'Montserrat', sans-serif;
+
+    --sombra-texto: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    --raio-borda: 8px;
+}
+
+/* =================================
+   ESTILOS GERAIS E RESET
+   ================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--cor-fundo-escuro);
+    color: var(--cor-texto-principal);
+    font-family: var(--fonte-corpo);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1; /* Faz o conteúdo crescer */
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--fonte-titulos);
+    letter-spacing: 2px;
+    text-shadow: var(--sombra-texto);
+}
+
+a {
+    color: var(--cor-ciano-brilhante);
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+/* =================================
+   HEADER E NAVEGAÇÃO
+   ================================= */
+
+/* CORRIGIDO: Seletor para o seu logo */
+.logo img {
+  height: 80px; 
+}
+
+header {
+    background-color: rgba(10, 17, 40, 0.8);
+    border-bottom: 2px solid var(--cor-dourado-sombra);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+/* AJUSTADO: Layout flexível para Logo | Links | Ícones */
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Links de Navegação */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem; /* Mais espaço */
+}
+
+.nav-links a {
+    color: var(--cor-texto-principal);
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Ícones do Header (ADICIONADO) */
+.header-icons {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.header-icons a {
+    color: var(--cor-texto-principal);
+    font-size: 1.3rem;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* EFEITO HOVER ADICIONADO (Links + Ícones) */
+.nav-links a:hover,
+.header-icons a:hover {
+    color: var(--cor-amarelo-hover);
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.6); /* Sombra leve */
+}
+
+
+/* =================================
+   BOTÕES ESTILIZADOS
+   ================================= */
+.btn {
+    display: inline-block;
+    font-family: var(--fonte-titulos);
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--cor-fundo-escuro);
+    background: linear-gradient(180deg, var(--cor-dourado-brilhante), var(--cor-dourado-sombra));
+    padding: 0.8rem 2.5rem;
+    border-radius: var(--raio-borda);
+    border-bottom: 4px solid #b37800;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(247, 183, 51, 0.4);
+}
+
+.btn:active {
+    transform: translateY(1px);
+    border-bottom-width: 2px;
+}
+
+/* =================================
+   SEÇÃO HERO (TOPO DA HOME)
+   ================================= */
+.hero {
+    background-size: cover;
+    background-position: center;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.hero h1 {
+    font-size: 6.5rem; 
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.8rem; 
+    color: var(--cor-texto-principal);
+    margin-bottom: 2rem;
+}
+
+/* =================================
+   SEÇÕES DE CONTEÚDO
+   ================================= */
+.content-section {
+    margin-bottom: 4rem;
+    border-radius: var(--raio-borda);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 3.5rem; 
+    margin-bottom: 2.5rem; 
+    color: var(--cor-texto-principal);
+}
+
+/* =================================
+   CARDS (Notícias, Loja, Jogadores)
+   ================================= */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background-color: var(--cor-fundo-medio);
+    border: 2px solid #2a3a6b;
+    border-radius: var(--raio-borda);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(74, 255, 222, 0.2);
+}
+
+.card-image img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.card-content h3 {
+    font-size: 2.8rem; 
+    margin-bottom: 0.5rem;
+}
+
+.card-content p {
+    color: var(--cor-texto-secundario);
+}
+
+.jogador-funcao {
+    font-size: 1.2rem;
+    color: var(--cor-dourado-brilhante);
+    font-weight: bold;
+}
+
+
+/* =================================
+   FORMULÁRIOS (Login/Cadastro)
+   ================================= */
+form {
+    max-width: 500px;
+    margin: 2rem auto;
+    background-color: var(--cor-fundo-medio);
+    padding: 2.5rem;
+    border-radius: var(--raio-borda);
+}
+
+form input {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--cor-fundo-escuro);
+    border: 2px solid #2a3a6b;
+    border-radius: var(--raio-borda);
+    color: var(--cor-texto-principal);
+    font-size: 1rem;
+}
+
+form button {
+    width: 100%;
+}
+
+/* =================================
+   FOOTER (ESTILOS NOVOS)
+   ================================= */
+footer {
+    background-color: var(--cor-fundo-medio);
+    padding-top: 3rem;
+    margin-top: auto; /* Garante que o footer fique no final */
+}
+
+.logo-footer {
+    height: 50px;
+    width: auto; /* Garante proporção correta */
+}
+
+/* Ajusta o padding do container PAI do footer */
+.footer-content.container {
+    padding-top: 0;
+    padding-bottom: 2.5rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+}
+
+.footer-col h4 {
+    font-family: var(--fonte-titulos);
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    color: var(--cor-texto-principal);
+    margin-bottom: 1rem;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-col ul a {
+    color: var(--cor-texto-secundario);
+    font-family: var(--fonte-corpo);
+    transition: color 0.3s ease;
+}
+
+.footer-col ul a:hover {
+    color: var(--cor-texto-principal);
+}
+
+.social-icons {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.social-icons a {
+    color: var(--cor-texto-principal);
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--cor-amarelo-hover);
+}
+
+.copyright {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 2rem;
+    border-top: 2px solid var(--cor-dourado-sombra);
+    color: var(--cor-texto-secundario);
+    font-size: 0.9rem;
+}
+
+
+/* =================================
+   RESPONSIVIDADE
+   ================================= */
+@media (max-width: 900px) { /* Ponto de quebra maior para o menu */
+    header nav { 
+        flex-direction: column; 
+        gap: 1.5rem; 
+    }
+    .nav-links {
+        order: 3; /* Coloca links por último */
+    }
+    .logo {
+        order: 1;
+    }
+    .header-icons {
+        order: 2;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 4rem; } 
+    .hero p { font-size: 1.4rem; } 
+    
+    .section-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 2.8rem; }
+    .card-content h3 { font-size: 2.2rem; }
+
+    /* Ajusta footer para 1 coluna */
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .logo-footer {
+        margin: 0 auto; /* Centraliza logo */
+    }
+    .social-icons {
+        justify-content: center; /* Centraliza ícones */
+    }
+}

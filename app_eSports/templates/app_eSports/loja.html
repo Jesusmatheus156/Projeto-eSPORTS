@@ -1,0 +1,30 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Loja{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 4rem; margin-bottom: 3rem;">Nossa Loja</h1>
+
+    <div class="card-grid">
+        {% for produto in produtos %}
+        <a href="{% url 'produto_detalhe' produto.pk %}" class="card">
+            <div class="card-image">
+                {% if produto.imagem %}
+                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                {% else %}
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                {% endif %}
+            </div>
+            <div class="card-content">
+                <h3>{{ produto.nome }}</h3>
+                <p style="font-size: 1.5rem; color: var(--cor-dourado-brilhante); font-weight: bold;">R$ {{ produto.preco }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <p>Nenhum produto na loja no momento.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Seu Carrinho{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 4rem; margin-bottom: 3rem;">Carrinho de Compras</h1>
+
+    {% if produtos_com_detalhes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in produtos_com_detalhes %}
+                <tr>
+                    <td>{{ item.produto.nome }}</td>
+                    <td>R$ {{ item.produto.preco }}</td>
+                    <td>{{ item.quantidade }}</td>
+                    <td>R$ {{ item.subtotal }}</td>
+                    <td><a href="{% url 'remover_do_carrinho' item.produto.id %}" style="color: #ff6b6b;">Remover</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h2 style="text-align: right; margin-top: 2rem; font-size: 2.5rem;">Total: R$ {{ total_carrinho }}</h2>
+        <div style="text-align: right; margin-top: 1rem;">
+            <a href="#" class="btn">Finalizar Compra</a>
+        </div>
+    {% else %}
+        <p style="text-align: center; font-size: 1.2rem;">Seu carrinho está vazio.</p>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'loja' %}" class="btn">Ir para a Loja</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}{{ noticia.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <article>
+        <h1>{{ noticia.titulo }}</h1>
+        <p style="color: var(--cor-texto-secundario); margin-bottom: 2rem;">
+            Por {{ noticia.autor.username }} em {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
+        </p>
+
+        {% if noticia.imagem_destaque %}
+            <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}" style="width: 100%; border-radius: var(--raio-borda); margin-bottom: 2rem;">
+        {% endif %}
+        
+        <div style="font-size: 1.1rem; line-height: 1.8;">
+            {{ noticia.conteudo|linebreaks }}
+        </div>
+    </article>
+    <a href="{% url 'noticias_lista' %}" class="btn" style="margin-top: 3rem;">Voltar para Notícias</a>
+</div>
+{% endblock %}

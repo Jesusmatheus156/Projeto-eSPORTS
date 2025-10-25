@@ -1,0 +1,18 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Transmissão ao Vivo{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center;">
+    <h1 style="font-size: 4rem; margin-bottom: 1rem;">Ao Vivo</h1>
+    <p style="color: var(--cor-texto-secundario); margin-bottom: 3rem;">Assista nossas partidas e treinos aqui!</p>
+    
+    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;">
+        <iframe
+            src="https://player.twitch.tv/?channel={{ twitch_channel }}&parent={{ request.get_host }}"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;">
+        </iframe>
+    </div>
+</div>
+{% endblock %}

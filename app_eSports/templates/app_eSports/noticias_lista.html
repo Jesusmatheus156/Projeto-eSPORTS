@@ -1,0 +1,30 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Notícias{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; font-size: 4rem; margin-bottom: 3rem;">Todas as Notícias</h1>
+    
+    <div class="card-grid">
+        {% for noticia in noticias %}
+        <a href="{% url 'noticia_detalhe' noticia.pk %}" class="card">
+            <div class="card-image">
+                {% if noticia.imagem_destaque %}
+                    <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}">
+                {% else %}
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                {% endif %}
+            </div>
+            <div class="card-content">
+                <h3>{{ noticia.titulo }}</h3>
+                <p>Por {{ noticia.autor.username }} em {{ noticia.data_publicacao|date:"d/m/Y" }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <p>Nenhuma notícia para exibir no momento.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

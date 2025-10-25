@@ -1,0 +1,94 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+
+<section class="hero" style="background-image: url('{% static 'app_eSports/img/wp11177140.jpg' %}')">
+    <h1 style="text-shadow: 4px 4px 5px rgba(0, 0, 0, 2.5);">Bem-vindo à Arena</h1>
+    <p style="text-shadow: 4px 4px 5px rgba(0, 0, 0, 2.5);">A casa oficial da nossa equipe de Clash Royale!</p>
+    <div>
+        <a href="{% url 'loja' %}" class="btn">Visite a Loja</a>
+        <a href="{% url 'noticias_lista' %}" class="btn">Últimas Notícias</a>
+    </div>
+</section>
+
+<div class="container">
+
+    <section id="lancamentos" class="content-section">
+        <h2 class="section-title">LANÇAMENTOS</h2>
+        <div class="card-grid">
+            
+            <div class="card">
+                <div class="card-image">
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 1">
+                </div>
+                <div class="card-content">
+                    <h3>Nome do Lançamento 1</h3>
+                    <p>Breve descrição do item ou evento que foi lançado.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-image">
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 2">
+                </div>
+                <div class="card-content">
+                    <h3>Nome do Lançamento 2</h3>
+                    <p>Breve descrição do item ou evento que foi lançado.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-image">
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 3">
+                </div>
+                <div class="card-content">
+                    <h3>Nome do Lançamento 3</h3>
+                    <p>Breve descrição do item ou evento que foi lançado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="noticias" class="content-section">
+        <h2 class="section-title">Últimas Notícias</h2>
+        <div class="card-grid">
+            {% for noticia in noticias %}
+            <a href="{% url 'noticia_detalhe' noticia.pk %}" class="card">
+                <div class="card-image">
+                    {% if noticia.imagem_destaque %}
+                        <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}">
+                    {% else %}
+                        <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                    {% endif %}
+                </div>
+                <div class="card-content">
+                    <h3>{{ noticia.titulo }}</h3>
+                    <p>Publicado em {{ noticia.data_publicacao|date:"d/m/Y" }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <p>Nenhuma notícia encontrada.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="jogadores" class="content-section">
+        <h2 class="section-title">Nossos Jogadores</h2>
+        <div class="card-grid">
+            {% for jogador in jogadores %}
+                <div class="card">
+                    <div class="card-content" style="text-align: center;">
+                        <h3>{{ jogador.nickname }}</h3>
+                        <p class="jogador-funcao">{{ jogador.funcao }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Nenhum jogador cadastrado.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+</div> {% endblock %}

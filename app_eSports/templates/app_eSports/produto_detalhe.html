@@ -1,0 +1,28 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}{{ produto.nome }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-grid">
+        <div>
+            {% if produto.imagem %}
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" style="border-radius: var(--raio-borda);">
+            {% endif %}
+        </div>
+        <div class="section-text">
+            <h2>{{ produto.nome }}</h2>
+            <p style="font-size: 2.5rem; color: var(--cor-dourado-brilhante); font-weight: bold; margin-bottom: 1rem;">R$ {{ produto.preco }}</p>
+            <p style="color: var(--cor-texto-secundario); margin-bottom: 2rem;">{{ produto.descricao }}</p>
+
+            <form action="{% url 'adicionar_ao_carrinho' produto.id %}" method="post">
+                {% csrf_token %}
+                <label for="quantidade" style="font-weight: bold;">Quantidade:</label>
+                <input type="number" name="quantidade" id="quantidade" value="1" min="1" max="{{ produto.estoque }}">
+                <button type="submit" class="btn">Adicionar ao Carrinho</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
