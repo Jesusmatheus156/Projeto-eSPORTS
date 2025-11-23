@@ -1,5 +1,8 @@
-### Projeto-eSPORTS
+### 🎮 Projeto eSPORTS
 
+Estrutura do projeto:
+
+```bash
 ├── 📁 app_eSports
 │   ├── 📁 migrations
 │   │   ├── 🐍 0001_initial.py
@@ -44,5 +47,5 @@
 ├── 📄 LICENSE
 ├── 📝 README.md
 ├── 📄 db.sqlite3
-├── 🐍 manage.py
+└── 🐍 manage.py
 └── 📄 requirements.txt
