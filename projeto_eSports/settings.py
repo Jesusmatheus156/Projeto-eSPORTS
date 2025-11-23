@@ -4,7 +4,7 @@ Django settings for projeto_eSports project.
 
 from pathlib import Path
 import os
-import dj_database_url # Importado para ler a URL do banco
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,11 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Use a variável de ambiente SECRET_KEY no Render para segurança
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-slqd-#1*$2(13^#!o7r9u*@gpuxdes1jck_2ecvbze-w040rnt')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG') == 'True' # Lê a variável de ambiente DEBUG, False por padrão
+DEBUG = os.environ.get('DEBUG') == 'True' 
 
 ALLOWED_HOSTS = [
     '127.0.0.1', 
@@ -41,7 +40,10 @@ INSTALLED_APPS = [
     
     # CKEditor e Uploads
     'ckeditor',
-    'ckeditor_uploader', # Necessário para o recurso de upload do editor
+    'ckeditor_uploader', 
+    
+    # Para uploads em produção (S3, etc.)
+    'django_storages', 
 ]
 
 MIDDLEWARE = [
@@ -57,7 +59,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app_eSports.middleware.VisitCounterMiddleware',
-    # A linha 'django.contrib.sessions.middleware.SessionMiddleware' duplicada foi removida
 ]
 
 ROOT_URLCONF = 'projeto_eSports.urls'
@@ -98,18 +99,14 @@ DATABASES = {
 if os.environ.get('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
         conn_max_age=600,
-        ssl_require=True, # Importante para conexão segura com o Render
+        ssl_require=True, 
         default=os.environ.get('DATABASE_URL')
     )
-    # Garante o engine correto no Render
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
-# A LÓGICA DE MIGRAÇÃO E COLLECTSTATIC FOI MOVIDA PARA o Start Command no Render
 # ----------------------------------------------------
 
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -128,16 +125,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'pt-br'
-
 TIME_ZONE = 'America/Sao_Paulo'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
 # ----------------------------------------------------
-## 📂 Static Files (CSS, JS, Images)
+## 📂 Static Files (CSS, JS, Images) - WhiteNoise
 # ----------------------------------------------------
 
 # URL base para arquivos estáticos
@@ -156,13 +150,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # URL para arquivos de mídia (uploads de usuário)
 MEDIA_URL = '/media/'
 
-# Diretório local para uploads (não persistente no Render sem S3/Cloud Storage)
+# Diretório local para uploads (usado apenas em desenvolvimento)
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configuração obrigatória do CKEditor para o caminho de upload
 CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
 
-# Configuração opcional do CKEditor para personalizar a barra de ferramentas, etc.
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'full',
@@ -171,6 +164,15 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+# ----------------------------------------------------
+## 🔑 Configuração de Superusuário Automatizada
+# ----------------------------------------------------
+# Variáveis lidas pelo entrypoint.sh para criar o admin
+DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL')
+
+# ----------------------------------------------------
+
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
