@@ -131,22 +131,15 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Configuração de Estáticos
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # O diretório que collectstatic usa
 
-# Configuração de estáticos para produção no Render
-# STATIC_ROOT define onde o collectstatic deve colocar os arquivos
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    # Se você tiver pastas estáticas específicas fora dos apps, coloque-as aqui
-]
+# Configuração WhiteNoise para otimizar arquivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# Configuração de arquivos de Mídia (Uploads de usuário)
-MEDIA_URL = '/media/'
+# Configuração de Mídia (para upload de usuários)
+# O Render NÃO serve arquivos MEDIA por padrão. 
+# Você DEVE usar um serviço de terceiros (como AWS S3, que requer django-storages).
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-CKEDITOR_UPLOAD_PATH = 'uploads/'
