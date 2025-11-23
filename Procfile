@@ -1,0 +1,1 @@
+web: gunicorn projeto_eSports.wsgi  

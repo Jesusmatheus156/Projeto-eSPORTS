@@ -1,0 +1,46 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Classificação CSI{% endblock %}
+
+{% block content %}
+<div class="container noticias-wrap">
+
+    <h1 style="
+        text-align: center; 
+        font-size: 4rem; 
+        margin-bottom: 1.5rem; 
+        padding-bottom: 1.5rem; 
+        font-family: var(--fonte-titulos); 
+        color: var(--cor-texto-principal); 
+        border-bottom: 2px solid var(--cor-bordas);
+    ">
+        Classificação CSI
+    </h1>
+
+    <p style="
+        text-align: center; 
+        font-size: 1.1rem; 
+        color: var(--cor-texto-secundario); 
+        margin-bottom: 2.5rem; 
+        font-family: var(--fonte-corpo);
+    ">
+        Acompanhe aqui a chave completa do torneio CSI (Campeonato da Semana de Informática).
+    </p>
+
+    <iframe src="https://challonge.com/pt_BR/i3i04dfi/module?theme=dark&scale_to_fit=1&show_final_results=1&multiplier=0.9" 
+        width="100%" 
+        height="600" 
+        frameborder="0" 
+        scrolling="auto" 
+        allowtransparency="true"
+        style="
+            display: block;
+            background-color: var(--cor-fundo-medio); 
+            border: 1px solid var(--cor-bordas); 
+            border-radius: var(--raio-borda); 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        ">
+    </iframe>
+</div>
+{% endblock %}

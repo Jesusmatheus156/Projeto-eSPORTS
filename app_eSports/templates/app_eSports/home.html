@@ -7,88 +7,161 @@
 
 <section class="hero" style="background-image: url('{% static 'app_eSports/img/wp11177140.jpg' %}')">
     <h1 style="text-shadow: 4px 4px 5px rgba(0, 0, 0, 2.5);">Bem-vindo à Arena</h1>
-    <p style="text-shadow: 4px 4px 5px rgba(0, 0, 0, 2.5);">A casa oficial da nossa equipe de Clash Royale!</p>
-    <div>
+    <p style="text-shadow: 4px 4px 5px rgba(0, 0, 0, 2.5);">A casa oficial da equipe Reis da Torre!</p>
+<!--  <div>
         <a href="{% url 'loja' %}" class="btn">Visite a Loja</a>
         <a href="{% url 'noticias_lista' %}" class="btn">Últimas Notícias</a>
     </div>
+--> 
 </section>
 
 <div class="container">
 
-    <section id="lancamentos" class="content-section">
+<section id="lancamentos" class="content-section">
         <h2 class="section-title">LANÇAMENTOS</h2>
+        
         <div class="card-grid">
             
-            <div class="card">
-                <div class="card-image">
-                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 1">
-                </div>
-                <div class="card-content">
-                    <h3>Nome do Lançamento 1</h3>
-                    <p>Breve descrição do item ou evento que foi lançado.</p>
-                </div>
-            </div>
+            {% for produto in lancamentos %}
+                <a href="{% url 'produto_detalhe' produto.pk %}" class="card">
+                    
+                    {% with produto.imagens.first as primeira_imagem %}
+                        <div class="card-image">
+                            {% if primeira_imagem %}
+                                <img src="{{ primeira_imagem.imagem.url }}" alt="{{ produto.nome }}">
+                            {% else %}
+                                <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                            {% endif %}
+                        </div>
+                    {% endwith %}
+
+                    <div class="card-content">
+                        <h3>{{ produto.nome }}</h3>
+                        
+                        <div class="card-precos">
+                            {% with produto.variacoes.first as primeira_variacao %}
+                                {% if primeira_variacao %}
+                                    
+                                    {% if primeira_variacao.porcentagem_off > 0 %}
+                                    <s class="preco-antigo">R$ {{ primeira_variacao.preco_antigo|floatformat:2 }}</s>
+                                    {% else %}
+                                    <s class="preco-antigo" style="visibility: hidden;">R$ 0,00</s> 
+                                    {% endif %}
+                                    
+                                    <div class="preco-atual-container">
+                                        <span class="preco-atual">
+                                            R$ {{ primeira_variacao.preco|floatformat:2 }}
+                                        </span>
+                                        {% if primeira_variacao.porcentagem_off > 0 %}
+                                        <span class="preco-desconto">{{ primeira_variacao.porcentagem_off }}% OFF</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if primeira_variacao.max_parcelas_sem_juros > 1 %}
+                                    <span class="preco-parcelas">
+                                        em {{ primeira_variacao.max_parcelas_sem_juros }}x R$ {{ primeira_variacao.valor_parcela|floatformat:2 }} sem juros
+                                    </span>
+                                    {% endif %}
+
+                                    {% if primeira_variacao.frete_gratis %}
+                                    <span class="frete-gratis">
+                                        Frete grátis <i class="fas fa-bolt"></i>
+                                    </span>
+                                    {% endif %}
+
+                                {% else %}
+                                    <p style="font-size: 1.2rem; color: var(--cor-texto-secundario);">Indisponível</p>
+                                {% endif %}
+                            {% endwith %}
+                        </div> 
+                        </div> </a>
+            {% empty %}
+                <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem; color: var(--cor-texto-secundario);">
+                    Nenhum lançamento no momento.
+                </p>
+            {% endfor %}
             
-            <div class="card">
-                <div class="card-image">
-                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 2">
-                </div>
-                <div class="card-content">
-                    <h3>Nome do Lançamento 2</h3>
-                    <p>Breve descrição do item ou evento que foi lançado.</p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-image">
-                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Lançamento 3">
-                </div>
-                <div class="card-content">
-                    <h3>Nome do Lançamento 3</h3>
-                    <p>Breve descrição do item ou evento que foi lançado.</p>
-                </div>
-            </div>
-        </div>
+        </div> 
     </section>
 
     <section id="noticias" class="content-section">
         <h2 class="section-title">Últimas Notícias</h2>
-        <div class="card-grid">
+        
+        <div class="noticias-grid">  
             {% for noticia in noticias %}
-            <a href="{% url 'noticia_detalhe' noticia.pk %}" class="card">
-                <div class="card-image">
-                    {% if noticia.imagem_destaque %}
-                        <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}">
-                    {% else %}
-                        <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+            <article class="noticia-card" style="width: 365px;">
+                <a class="noticia-thumb" href="{% url 'noticia_detalhe' noticia.pk %}" 
+                   aria-label="Abrir notícia: {{ noticia.titulo }}"
+                   style="background-image: url('{% if noticia.imagem_destaque %}{{ noticia.imagem_destaque.url }}{% else %}{% static 'app_eSports/images/placeholder.jpg' %}{% endif %}')">
+                    
+                    {% if noticia.categoria %}
+                    <span class="noticia-tag">{{ noticia.categoria }}</span>
                     {% endif %}
-                </div>
-                <div class="card-content">
+                    </a>
+                <div class="noticia-card-body">
+                    <div class="noticia-meta">
+                        {{ noticia.data_publicacao|date:"d/m/Y" }}
+                    </div>
+                    
                     <h3>{{ noticia.titulo }}</h3>
-                    <p>Publicado em {{ noticia.data_publicacao|date:"d/m/Y" }}</p>
+                    
+                    <p>{{ noticia.resumo }}</p> 
+                    
+                    <div class="noticia-actions">
+                        <a class="btn" href="{% url 'noticia_detalhe' noticia.pk %}">Ler mais</a>
+                    </div>
                 </div>
-            </a>
+            </article>
             {% empty %}
-            <p>Nenhuma notícia encontrada.</p>
+            <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;">Nenhuma notícia para exibir no momento.</p>
             {% endfor %}
         </div>
     </section>
 
     <section id="jogadores" class="content-section">
         <h2 class="section-title">Nossos Jogadores</h2>
-        <div class="card-grid">
+        <div class="card-grid jogadores-grid-final"> {# Classe do grid #}
             {% for jogador in jogadores %}
-                <div class="card">
-                    <div class="card-content" style="text-align: center;">
-                        <h3>{{ jogador.nickname }}</h3>
-                        <p class="jogador-funcao">{{ jogador.funcao }}</p>
+                <article class="jogador-card-final">
+                    
+                    {# 1. Camada de Fundo (Imagem) #}
+                    <div class="jogador-card-background-final" style="background-image: url('{% if jogador.imagem %}{{ jogador.imagem.url }}{% else %}{% static 'app_eSports\img\card_bg_placeholder.jpg' %}{% endif %}')"></div>
+
+                    {# 2. Camada de Overlay (Gradiente) #}
+                    <div class="jogador-card-overlay-final"></div>
+                    
+                    {# 3. Conteúdo Sobreposto (Texto) #}
+                    <div class="jogador-card-content-final">
+                        
+                        {# Número no topo (usei o Nível CR, como na referência) #}
+                        {% if jogador.nivel_cr %}
+                            <span class="jogador-numero-final" title="Nível">{{ jogador.nivel_cr }}</span>
+                        {% else %}
+                            <span></span> {# Deixa um span vazio para o layout funcionar #}
+                        {% endif %}
+                        
+                        {# Informações na base #}
+                        <div class="jogador-info-bottom-final">
+                            <h3 class="jogador-nickname-final">{{ jogador.nickname }}</h3>
+                            
+                            <div class="jogador-meta-final">
+                                {% if jogador.cla %}
+                                    <span class="jogador-cla-final">{{ jogador.cla }}</span>
+                                {% endif %}
+                                {% if jogador.trofeus_cr %}
+                                <span class="stat-item-final">
+                                    <i class="fas fa-trophy" title="Troféus"></i> {{ jogador.trofeus_cr }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                </article>
             {% empty %}
-                <p>Nenhum jogador cadastrado.</p>
+                <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;">Nenhum jogador cadastrado no momento.</p>
             {% endfor %}
         </div>
     </section>
-
-</div> {% endblock %}
+</div> 
+{% endblock %}

@@ -6,17 +6,17 @@
 {% block content %}
 <div class="container" style="max-width: 900px;">
     <article>
-        <h1>{{ noticia.titulo }}</h1>
-        <p style="color: var(--cor-texto-secundario); margin-bottom: 2rem;">
-            Por {{ noticia.autor.username }} em {{ noticia.data_publicacao|date:"d/m/Y H:i" }}
+        <h1 style="text-align: center;">{{ noticia.titulo }}</h1>
+        <p style="color: var(--cor-texto-secundario); margin-bottom: 4rem; text-align: center;">
+            Por {{ noticia.autor.username }} em {{ noticia.data_publicacao|date:"d \d\e F \d\e Y" }}
         </p>
 
-        {% if noticia.imagem_destaque %}
-            <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}" style="width: 100%; border-radius: var(--raio-borda); margin-bottom: 2rem;">
-        {% endif %}
-        
+<!--      {% if noticia.imagem_destaque %}
+            <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}" style="width: 50%; border-radius: var(--raio-borda); margin-bottom: 2rem;">
+        {% endif %} 
+-->
         <div style="font-size: 1.1rem; line-height: 1.8;">
-            {{ noticia.conteudo|linebreaks }}
+            {{ noticia.conteudo|safe}}
         </div>
     </article>
     <a href="{% url 'noticias_lista' %}" class="btn" style="margin-top: 3rem;">Voltar para Notícias</a>

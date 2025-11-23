@@ -1,0 +1,98 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Acesso{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+
+    <div id="loginForm" class="form-container {% if form_type == 'login' or not form_type %}active{% endif %}">
+        <h1>LOGIN</h1>
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            
+            {% if login_form %}
+                {{ login_form.as_p }}
+            {% else %}
+                <input type="text" name="username" placeholder="Usuário" required>
+                <input type="password" name="password" placeholder="Senha" required>
+            {% endif %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <p class="auth-error">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            <button type="submit">ENTRAR</button>
+        </form>
+        <p><a onclick="alternarForm('recuperarForm')">Esqueceu a senha?</a></p>
+        <p>Não tem conta? <a onclick="alternarForm('cadastroForm')">Cadastre-se aqui</a></p>
+    </div>
+
+   
+    <div id="cadastroForm" class="form-container {% if form_type == 'cadastro' %}active{% endif %}">
+        <h1>CADASTRO</h1>
+        <form action="{% url 'cadastro' %}" method="post">
+            {% csrf_token %}
+
+            {% if cadastro_form %}
+                 {{ cadastro_form.as_p }}
+            {% else %}
+                <input type="text" name="nome" placeholder="Nome" required>
+                <input type="email" name="email" placeholder="E-mail" required>
+                <input type="password" name="senha" placeholder="Senha" required>
+                <input type="password" name="confirma_senha" placeholder="Confirme a senha" required>
+            {% endif %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags != 'error' %} <p class="auth-success">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            <button type="submit">FINALIZAR</button>
+        </form>
+        <p>Já tem conta? <a onclick="alternarForm('loginForm')">Entrar aqui</a></p>
+    </div>
+
+    
+    <div id="recuperarForm" class="form-container {% if form_type == 'recuperar' or form %}active{% endif %}">
+        <h1>RECUPERAR SENHA</h1>
+        <p style="margin-bottom: 20px;">Enviaremos um link para seu e-mail para redefinir sua senha.</p>
+        
+        <form action="{% url 'password_reset' %}" method="post">
+            {% csrf_token %}
+            
+            {% if form %} {{ form.as_p }}
+            {% else %}
+                <input type="email" name="email_recuperar" placeholder="Digite seu e-mail" required>
+            {% endif %}
+            
+            <button type="submit">ENVIAR LINK</button>
+        </form>
+        <p>Lembrou a senha? <a onclick="alternarForm('loginForm')">Voltar ao login</a></p>
+    </div>
+</div>
+
+<script>
+    // Função para alternar os formulários
+    function alternarForm(formId) {
+        const forms = document.querySelectorAll(".form-container");
+        forms.forEach(f => f.classList.remove("active"));
+        document.getElementById(formId).classList.add("active");
+    }
+
+    // Garante que o formulário correto (passado pelo Django) esteja visível
+    document.addEventListener('DOMContentLoaded', () => {
+        const activeForm = document.querySelector('.form-container.active');
+        if (!activeForm) {
+            // Se nenhum form foi marcado como ativo pelo Django, mostra o login
+            document.getElementById('loginForm').classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

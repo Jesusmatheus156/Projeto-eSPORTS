@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jaro:opsz@6..72&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'app_eSports\img\Logo_Equipe_Reis_da_Torre\favicon.svg' %}" type="image/x-icon">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
@@ -18,32 +19,36 @@
     <header>
         <nav>
             <a href="{% url 'home' %}" class="logo">
-                <img class="img" src="{% static 'app_eSports/img/Logo Equipe Reis da Torre.svg' %}" alt="Logo eSports">
+                <img class="img" src="{% static 'app_eSports\img\Logo_Equipe_Reis_da_Torre\Logo Equipe Reis da Torre.svg' %}" alt="Logo eSports">
             </a>
             
-            <ul class="nav-links"> <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'noticias_lista' %}">News</a></li>
-                <li><a href="{% url 'loja' %}">Shop</a></li>
-                <li><a href="{% url 'transmissao' %}">Live</a></li>
-                <li><a href="{% url 'carrinho' %}">Clips</a></li>
-                {% if user.is_authenticated %}
-                    <li><span>Olá, {{ user.username }}</span></li>
-                    <li><a href="{% url 'logout' %}">Sair</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                {% endif %}
+            <ul class="nav-links"> 
+                <li><a href="{% url 'home' %}">Início</a></li>
+                <li><a href="{% url 'noticias_lista' %}">Notícias</a></li>
+                <li><a href="{% url 'loja' %}">Loja</a></li>
+                <li><a href="{% url 'transmissao' %}">Transmissão</a></li>
+                <li><a href="{% url 'agenda' %}">Agenda</a></li>
+                <li><a href="{% url 'classificacao_csi' %}">CSI</a></li>
+                <li><a href="{% url 'sobre' %}">Sobre</a></li> 
             </ul>
 
             <div class="header-icons">
-                <a href="#"><i class="fas fa-search"></i></a>
+                
+                <div class="search-container"> 
+                    <form action="{% url 'pesquisa' %}" method="get" class="search-form" id="search-form">
+                        <input type="text" name="q" placeholder="Pesquisar..." class="search-input">
+                        <button type="submit" class="search-submit"><i class="fas fa-search"></i></button> 
+                    </form>
+                    <a href="#" id="search-toggle" class="search-toggle-icon" title="Pesquisar"><i class="fas fa-search"></i></a>
+                </div>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}"><i class="fas fa-user"></i></a>
+                    <a href="{% url 'perfil' %}" title="Meu Perfil"><i class="fas fa-user"></i></a>
                 {% else %}
-                    <a href="{% url 'login' %}"><i class="fas fa-user"></i></a>
+                    <a href="{% url 'login' %}" title="Login/Cadastro"><i class="fas fa-user"></i></a>
                 {% endif %}
-                <a href="{% url 'carrinho' %}"><i class="fas fa-shopping-bag"></i></a>
+                
+                <a href="{% url 'carrinho' %}" title="Carrinho"><i class="fas fa-shopping-bag"></i></a>
             </div>
-
         </nav>
     </header>
 
@@ -52,11 +57,14 @@
         {% endblock %}
     </main>
 
-    <footer>
-        <div class="container footer-content">
-            <div class="footer-col">
-                <img src="{% static 'app_eSports\static\app_eSports\img\Logo Equipe Reis da Torre.svg' %}" alt="Logo eSports" class="logo-footer">
+<footer>
+        <div class="container footer-content"> {# Container principal do grid #}
+            {# Coluna 1: Logo #}
+            <div class="footer-col footer-col-logo">
+                <img src="{% static 'app_eSports\img\Logo_Equipe_Reis_da_Torre\Logo Equipe Reis da Torre.svg' %}" alt="Logo eSports" class="logo-footer">
             </div>
+            
+            {# Coluna 2: Termos e Políticas + Ícones Sociais #}
             <div class="footer-col">
                 <h4>TERMOS E POLÍTICAS</h4>
                 <ul>
@@ -64,13 +72,16 @@
                     <li><a href="#">Política de Frete</a></li>
                     <li><a href="#">Política de Privacidade</a></li>
                 </ul>
-                <div class="social-icons">
-                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                {# Ícones sociais podem vir aqui ou na próxima coluna #}
+                 <div class="social-icons" style="margin-top: 1.5rem;"> 
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Tiktok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" aria-label="Youtube"><i class="fa-brands fa-youtube"></i></a>
                 </div>
             </div>
+
+            {# Coluna 3: Links Redes Sociais (Opcional, pode remover se os ícones bastam) #}
             <div class="footer-col">
                 <h4>Redes Sociais</h4>
                 <ul>
@@ -81,10 +92,50 @@
                 </ul>
             </div>
         </div>
+
+        {# Bloco de Estatísticas - Separado do grid principal #}
+        <div class="site-stats container">
+            <span class="stat-item-footer"><i class="fas fa-users"></i> Usuários: {{ total_users }}</span>
+            <span class="stat-item-footer"><i class="fas fa-eye"></i> Visitas: {{ total_visits }}</span>
+        </div>
+
+        {# Copyright - Separado e centralizado #}
         <div class="copyright">
             <p>© Copyright REIS DA TORRE 2025 Todos os direitos reservados</p>
         </div>
     </footer>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchContainer = document.querySelector('.search-container');
+        const searchToggle = document.getElementById('search-toggle');
+        const searchForm = document.getElementById('search-form');
+        const searchInput = searchForm.querySelector('.search-input');
+
+        if (searchToggle && searchForm && searchContainer) { 
+            searchToggle.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                
+                // Adiciona/remove 'active' no container PAI
+                searchContainer.classList.toggle('active'); 
+                
+                if (searchContainer.classList.contains('active')) {
+                    // Dá um pequeno tempo para a transição começar antes de focar
+                    setTimeout(() => searchInput.focus(), 100); 
+                } else {
+                     searchInput.value = ''; // Limpa o campo ao fechar
+                }
+            });
+        }
+        
+        // Fecha se clicar fora
+        document.addEventListener('click', (e) => {
+            if (searchContainer && !searchContainer.contains(e.target) && searchContainer.classList.contains('active')) {
+                 searchContainer.classList.remove('active');
+                 searchInput.value = ''; // Limpa o campo
+            }
+        });
+    });
+    </script>
 </body>
 </html>

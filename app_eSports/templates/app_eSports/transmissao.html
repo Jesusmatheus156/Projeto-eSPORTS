@@ -1,18 +1,71 @@
 {% extends 'app_eSports/base.html' %}
 {% load static %}
 
-{% block title %}Transmissão ao Vivo{% endblock %}
+{% block title %}
+    {% if partida_ao_vivo_global %}
+        ⚫ AO VIVO: Reis vs {{ partida_ao_vivo_global.adversario }}
+    {% else %}
+        Transmissão
+    {% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="container" style="text-align: center;">
-    <h1 style="font-size: 4rem; margin-bottom: 1rem;">Ao Vivo</h1>
-    <p style="color: var(--cor-texto-secundario); margin-bottom: 3rem;">Assista nossas partidas e treinos aqui!</p>
+<div class="container" style="margin-top: 1rem;">
     
-    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;">
-        <iframe
-            src="https://player.twitch.tv/?channel={{ twitch_channel }}&parent={{ request.get_host }}"
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;">
-        </iframe>
+    {% if partida_ao_vivo_global %}
+        <h1 style="font-size: 3.5rem; margin-bottom: 1rem; text-align: center;">AO VIVO</h1>
+        <p style="color: var(--cor-texto-secundario); margin-bottom: 2rem; font-size: 1.5rem; text-align: center;">
+            Reis da Torre vs {{ partida_ao_vivo_global.adversario }}
+        </p>
+    {% endif %}
+
+    <div class.video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border: 3px solid var(--cor-dourado-brilhante); border-radius: var(--raio-borda);">
+        
+        {% if partida_ao_vivo_global and partida_ao_vivo_global.iframe_live %}
+            {{ partida_ao_vivo_global.iframe_live|safe }}
+        
+        {% else %}
+            <img src="{% static 'app_eSports/img/offline_banner.jpg' %}" alt="Estamos Offline" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--raio-borda);">
+            
+            {% if not partida_ao_vivo_global %}
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center; text-shadow: 2px 2px 4px #000;">
+                <h2 style="font-size: 3rem; font-family: var(--fonte-titulos); margin-bottom: 0;">Estamos Offline</h2>
+                <p style="font-size: 1.2rem;">Confira nossa agenda para as próximas partidas.</p>
+            </div>
+            {% endif %}
+
+        {% endif %}
     </div>
+
+
+    <div class="container" style="margin-top: 3rem;">
+        <h2 class="section-title" style="text-align: center; font-size: 3rem; margin-bottom: 3rem;">
+            Transmissões Anteriores
+        </h2>
+        
+        <div class="transmissoes-grid">
+            
+            {% for partida in transmissoes_anteriores %}
+            <a href="{{ partida.link_vod }}" class="card-transmissao" target="_blank" rel="noopener noreferrer">
+                <div class="thumbnail-transmissao">
+                    {% if partida.thumbnail_vod %}
+                        <img src="{{ partida.thumbnail_vod.url }}" alt="Thumbnail da partida vs {{ partida.adversario }}">
+                    {% else %}
+                        <img src="{% static 'app_eSports/images/placeholder_video.jpg' %}" alt="Thumbnail padrão">
+                    {% endif %}
+                    <span class="play-icon"><i class="fas fa-play"></i></span>
+                </div>
+                <h3>{{ partida.modalidade }}: Reis vs {{ partida.adversario }}</h3>
+                <span class="card-transmissao-meta">{{ partida.data_hora|date:"d/m/Y" }} | Resultado: {{ partida.resultado }}</span>
+            </a>
+            {% empty %}
+                <p style="grid-column: 1 / -1; text-align: center; color: var(--cor-texto-secundario); font-size: 1.2rem;">
+                    Nenhum VOD cadastrado ainda.
+                </p>
+            {% endfor %}
+            
+        </div>
+    </div>
+
 </div>
 {% endblock %}

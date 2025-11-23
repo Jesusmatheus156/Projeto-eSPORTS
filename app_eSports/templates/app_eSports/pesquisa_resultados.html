@@ -1,0 +1,74 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Resultados para {{ query }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="font-size: 4rem; margin-bottom: 1rem;">Resultados da Pesquisa</h1>
+    <p style="font-size: 1.5rem; color: var(--cor-texto-secundario); margin-bottom: 3rem;">
+        Você buscou por: <strong>"{{ query }}"</strong>
+    </p>
+
+    {% if not produtos and not noticias %}
+        <p style="text-align: center; font-size: 1.2rem;">Nenhum resultado encontrado para sua busca.</p>
+    {% endif %}
+
+    {% if produtos %}
+    <section id="produtos_encontrados" class="content-section">
+        <h2 class="section-title">Produtos Encontrados</h2>
+        <div class="card-grid">
+            {% for produto in produtos %}
+            <a href="{% url 'produto_detalhe' produto.pk %}" class="card">
+                
+                {% with produto.imagens.first as primeira_imagem %}
+                    <div class="card-image">
+                        {% if primeira_imagem %}
+                            <img src="{{ primeira_imagem.imagem.url }}" alt="{{ produto.nome }}">
+                        {% else %}
+                            <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                        {% endif %}
+                    </div>
+                {% endwith %}
+
+                <div class="card-content">
+                    <h3>{{ produto.nome }}</h3>
+                    {% with produto.variacoes.first as primeira_variacao %}
+                        {% if primeira_variacao %}
+                            <p style="font-size: 1.5rem; color: var(--cor-dourado-brilhante); font-weight: bold;">R$ {{ primeira_variacao.preco }}</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if noticias %}
+    <section id="noticias_encontradas" class="content-section">
+        <h2 class="section-title">Notícias Encontradas</h2>
+        <div class="noticias-grid"> {% for noticia in noticias %}
+            <article class="noticia-card">
+                <a class="noticia-thumb" href="{% url 'noticia_detalhe' noticia.pk %}"
+                   style="background-image: url('{% if noticia.imagem_destaque %}{{ noticia.imagem_destaque.url }}{% else %}{% static 'app_eSports/images/placeholder.jpg' %}{% endif %}')">
+                    <span class="noticia-thumb-title">{{ noticia.titulo }}</span>
+                </a>
+                <div class="noticia-card-body">
+                    <div class="noticia-meta">
+                        {{ noticia.data_publicacao|date:"d/m/Y" }}
+                    </div>
+                    <h3>{{ noticia.titulo }}</h3>
+                    <p>{{ noticia.conteudo|truncatewords:20|striptags }}</p>
+                    <div class="noticia-actions">
+                        <a class="btn" href="{% url 'noticia_detalhe' noticia.pk %}">Ler mais</a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}

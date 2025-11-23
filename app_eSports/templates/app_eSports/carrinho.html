@@ -4,41 +4,58 @@
 {% block title %}Seu Carrinho{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 style="text-align: center; font-size: 4rem; margin-bottom: 3rem;">Carrinho de Compras</h1>
+<main class="cart-wrap">
+    <div class="cart-container">
 
-    {% if produtos_com_detalhes %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Preço</th>
-                    <th>Quantidade</th>
-                    <th>Subtotal</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in produtos_com_detalhes %}
-                <tr>
-                    <td>{{ item.produto.nome }}</td>
-                    <td>R$ {{ item.produto.preco }}</td>
-                    <td>{{ item.quantidade }}</td>
-                    <td>R$ {{ item.subtotal }}</td>
-                    <td><a href="{% url 'remover_do_carrinho' item.produto.id %}" style="color: #ff6b6b;">Remover</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <h2 style="text-align: right; margin-top: 2rem; font-size: 2.5rem;">Total: R$ {{ total_carrinho }}</h2>
-        <div style="text-align: right; margin-top: 1rem;">
-            <a href="#" class="btn">Finalizar Compra</a>
-        </div>
-    {% else %}
-        <p style="text-align: center; font-size: 1.2rem;">Seu carrinho está vazio.</p>
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="{% url 'loja' %}" class="btn">Ir para a Loja</a>
-        </div>
-    {% endif %}
-</div>
+        <section class="cart-items-section">
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Seu Carrinho</h2>
+            
+            {% if produtos_com_detalhes %}
+                <ul class="cart-items-list">
+                    {% for item in produtos_com_detalhes %}
+                    <li class="cart-item">
+                        {% if item.imagem %}
+                        <img src="{{ item.imagem.imagem.url }}" alt="{{ item.produto.nome }}" class="cart-item-img">
+                        {% else %}
+                        <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Produto" class="cart-item-img">
+                        {% endif %}
+                        
+                        <div class="cart-item-info">
+                            <h3>{{ item.produto.nome }}</h3>
+                            <p style="color: var(--cor-dourado-brilhante); font-weight: bold;">{{ item.variacao.nome }}</p>
+                            <p>R$ {{ item.variacao.preco }}</p>
+                            <p>Qtd: {{ item.quantidade }}</p>
+                        </div>
+                        
+                        <div class="cart-item-total">
+                            <strong>R$ {{ item.subtotal }}</strong>
+                        </div>
+                        
+                        <a href="{% url 'remover_do_carrinho' item.variacao.id %}" class="cart-remove-btn" title="Remover item">x</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="text-align: center; font-size: 1.2rem;">Seu carrinho está vazio.</p>
+                <a href="{% url 'loja' %}" class="btn" style="margin-top: 1.5rem;">Ver Produtos</a>
+            {% endif %}
+        </section>
+
+        {% if produtos_com_detalhes %}
+        <aside class="cart-summary">
+            <h2 style="font-size: 2rem;">Resumo</h2>
+            <div class="cart-summary-row">
+                <span>Subtotal</span>
+                <strong>R$ {{ total_carrinho }}</strong>
+            </div>
+            <div class="cart-summary-row cart-total-row">
+                <span>Total</span>
+                <strong>R$ {{ total_carrinho }}</strong>
+            </div>
+            <a href="#" class="btn btn-checkout">Finalizar Compra</a>
+        </aside>
+        {% endif %}
+
+    </div>
+</main>
 {% endblock %}

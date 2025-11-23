@@ -10,20 +10,60 @@
     <div class="card-grid">
         {% for produto in produtos %}
         <a href="{% url 'produto_detalhe' produto.pk %}" class="card">
-            <div class="card-image">
-                {% if produto.imagem %}
-                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                {% else %}
-                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
-                {% endif %}
-            </div>
+            
+            {% with produto.imagens.first as primeira_imagem %}
+                <div class="card-image">
+                    {% if primeira_imagem %}
+                        <img src="{{ primeira_imagem.imagem.url }}" alt="{{ produto.nome }}">
+                    {% else %}
+                        <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+                    {% endif %}
+                </div>
+            {% endwith %}
+
             <div class="card-content">
                 <h3>{{ produto.nome }}</h3>
-                <p style="font-size: 1.5rem; color: var(--cor-dourado-brilhante); font-weight: bold;">R$ {{ produto.preco }}</p>
+                
+                <div class="card-precos">
+                    {% with produto.variacoes.first as primeira_variacao %}
+                        {% if primeira_variacao %}
+                            
+                            {% if primeira_variacao.porcentagem_off > 0 %}
+                            <s class="preco-antigo">R$ {{ primeira_variacao.preco_antigo|floatformat:2 }}</s>
+                            {% else %}
+                            <s class="preco-antigo" style="visibility: hidden;">R$ 0,00</s> 
+                            {% endif %}
+                            
+                            <div class="preco-atual-container">
+                                <span class="preco-atual">
+                                    R$ {{ primeira_variacao.preco|floatformat:2 }}
+                                </span>
+                                {% if primeira_variacao.porcentagem_off > 0 %}
+                                <span class="preco-desconto">{{ primeira_variacao.porcentagem_off }}% OFF</span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if primeira_variacao.max_parcelas_sem_juros > 1 %}
+                            <span class="preco-parcelas">
+                                em {{ primeira_variacao.max_parcelas_sem_juros }}x R$ {{ primeira_variacao.valor_parcela|floatformat:2 }} sem juros
+                            </span>
+                            {% endif %}
+
+                            {% if primeira_variacao.frete_gratis %}
+                            <span class="frete-gratis">
+                                Frete grátis <i class="fas fa-bolt"></i>
+                            </span>
+                            {% endif %}
+
+                        {% else %}
+                            <p style="font-size: 1.2rem; color: var(--cor-texto-secundario);">Indisponível</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </div>
-        </a>
+            </a>
         {% empty %}
-        <p>Nenhum produto na loja no momento.</p>
+            <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;">Nenhum produto na loja no momento.</p>
         {% endfor %}
     </div>
 </div>

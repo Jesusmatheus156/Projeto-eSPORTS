@@ -1,0 +1,66 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="font-size: 4rem; margin-bottom: 2rem;">Meu Perfil</h1>
+
+    <h2>Olá, {{ user.username }}!</h2>
+    
+    {% if user.jogador %}
+    <p style="font-size: 1.2rem; color: var(--cor-texto-secundario); margin-top: 1rem;">
+        Seu nickname é: <strong>{{ user.jogador.nickname }}</strong>
+    </p>
+    {% endif %}
+
+    <p style="font-size: 1.2rem; color: var(--cor-texto-secundario);">
+        Seu e-mail é: <strong>{{ user.email }}</strong>
+    </p>
+
+    <div style="margin-top: 3rem;">
+        <a href="#" class="btn">Meus Pedidos</a>
+        <a href="{% url 'logout' %}" class="btn" style="background: #c0392b; border-bottom-color: #7b241c; color: white;">Sair (Logout)</a>
+    </div>
+
+    <div style="margin-top: 4rem; border-top: 1px solid var(--cor-bordas); padding-top: 2rem;">
+        <h2 class="section-title" style="font-size: 2.5rem; margin-bottom: 2rem;">Itens no seu Carrinho</h2>
+        
+        {% if produtos_com_detalhes %}
+            <ul class="cart-items-list" style="max-width: 800px; margin: 0 auto;">
+                {% for item in produtos_com_detalhes %}
+                <li class="cart-item">
+                    {% if item.imagem %}
+                    <img src="{{ item.imagem.imagem.url }}" alt="{{ item.produto.nome }}" class="cart-item-img">
+                    {% else %}
+                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Produto" class="cart-item-img">
+                    {% endif %}
+                    
+                    <div class="cart-item-info">
+                        <h3>{{ item.produto.nome }}</h3>
+                        <p style="color: var(--cor-verde-loud); font-weight: bold;">{{ item.variacao.nome }}</p>
+                        <p>R$ {{ item.variacao.preco }} x {{ item.quantidade }}</p>
+                    </div>
+                    
+                    <div class="cart-item-total">
+                        <strong>R$ {{ item.subtotal }}</strong>
+                    </div>
+                    
+                    <a href="{% url 'remover_do_carrinho' item.variacao.id %}" class="cart-remove-btn" title="Remover item">x</a>
+                </li>
+                {% endfor %}
+            </ul>
+             <div style="text-align: right; max-width: 800px; margin: 1rem auto 0 auto;">
+                 <h3 style="font-size: 1.8rem;">Total: R$ {{ total_carrinho }}</h3>
+                 <a href="{% url 'carrinho' %}" class="btn" style="margin-top: 1rem;">Ver Carrinho Completo</a>
+             </div>
+        {% else %}
+            <p style="text-align: center; font-size: 1.2rem;">Seu carrinho está vazio.</p>
+            <div style="text-align: center; margin-top: 1rem;">
+                 <a href="{% url 'loja' %}" class="btn">Ir para a Loja</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -4,27 +4,36 @@
 {% block title %}Notícias{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container noticias-wrap">
     <h1 style="text-align: center; font-size: 4rem; margin-bottom: 3rem;">Todas as Notícias</h1>
-    
-    <div class="card-grid">
+
+    <section class="noticias-grid">
         {% for noticia in noticias %}
-        <a href="{% url 'noticia_detalhe' noticia.pk %}" class="card">
-            <div class="card-image">
-                {% if noticia.imagem_destaque %}
-                    <img src="{{ noticia.imagem_destaque.url }}" alt="{{ noticia.titulo }}">
-                {% else %}
-                    <img src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão">
+        <article class="noticia-card">
+            <a class="noticia-thumb" href="{% url 'noticia_detalhe' noticia.pk %}" 
+                aria-label="Abrir notícia: {{ noticia.titulo }}"
+                style="background-image: url('{% if noticia.imagem_destaque %}{{ noticia.imagem_destaque.url }}{% else %}{% static 'app_eSports/images/placeholder.jpg' %}{% endif %}')">
+                
+                {% if noticia.categoria %}
+                <span class="noticia-tag">{{ noticia.categoria }}</span>
                 {% endif %}
-            </div>
-            <div class="card-content">
+            </a>
+            <div class="noticia-card-body">
+                <div class="noticia-meta">
+                    {{ noticia.data_publicacao|date:"d/m/Y" }}
+                </div>
                 <h3>{{ noticia.titulo }}</h3>
-                <p>Por {{ noticia.autor.username }} em {{ noticia.data_publicacao|date:"d/m/Y" }}</p>
+                
+                <p>{{ noticia.resumo }}</p> 
+                
+                <div class="noticia-actions">
+                    <a class="btn" href="{% url 'noticia_detalhe' noticia.pk %}">Ler mais</a>
+                </div>
             </div>
-        </a>
+        </article>
         {% empty %}
-        <p>Nenhuma notícia para exibir no momento.</p>
+        <p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;">Nenhuma notícia para exibir no momento.</p>
         {% endfor %}
-    </div>
+    </section>
 </div>
 {% endblock %}

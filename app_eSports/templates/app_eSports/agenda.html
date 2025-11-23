@@ -1,0 +1,42 @@
+{% extends 'app_eSports/base.html' %}
+{% load static %}
+{% block title %}Agenda e Resultados{% endblock %}
+
+{% block content %}
+<div class="container noticias-wrap">
+    <h1 style="text-align: center; ...">Agenda e Resultados</h1>
+
+    {% if partida_ao_vivo_global %}
+    <section class="content-section">
+        <h2 class="section-title ao-vivo-title"><i class="fas fa-satellite-dish"></i> AO VIVO</h2>
+        <div class="agenda-grid">
+            
+            <article class="partida-card ao-vivo">
+                <div class="partida-header">
+                    <span class="partida-modalidade">{{ partida_ao_vivo_global.modalidade }}</span>
+                    <span class="partida-status-vivo">AO VIVO</span>
+                </div>
+                <div class="partida-body">
+                    <span class="time-nosso">Reis da Torre</span>
+                    <span class="partida-versus">vs</span>
+                    <span class="time-adversario">{{ partida_ao_vivo_global.adversario }}</span>
+                </div>
+                <div class="partida-footer">
+                    <p class="partida-data-hora">{{ partida_ao_vivo_global.data_hora|date:"d/m/Y \à\s H:i" }}</p>
+                    <a href="{% url 'transmissao' %}" class="btn">Assistir Agora <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </article>
+            
+        </div>
+    </section>
+    {% endif %}
+    <section class="content-section">
+        <h2 class="section-title">Próximas Partidas</h2>
+        </section>
+
+    <section class="content-section">
+        <h2 class="section-title">Últimos Resultados</h2>
+        </section>
+
+</div>
+{% endblock %}

@@ -4,25 +4,213 @@
 {% block title %}{{ produto.nome }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="section-grid">
-        <div>
-            {% if produto.imagem %}
-                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" style="border-radius: var(--raio-borda);">
-            {% endif %}
-        </div>
-        <div class="section-text">
-            <h2>{{ produto.nome }}</h2>
-            <p style="font-size: 2.5rem; color: var(--cor-dourado-brilhante); font-weight: bold; margin-bottom: 1rem;">R$ {{ produto.preco }}</p>
-            <p style="color: var(--cor-texto-secundario); margin-bottom: 2rem;">{{ produto.descricao }}</p>
-
-            <form action="{% url 'adicionar_ao_carrinho' produto.id %}" method="post">
-                {% csrf_token %}
-                <label for="quantidade" style="font-weight: bold;">Quantidade:</label>
-                <input type="number" name="quantidade" id="quantidade" value="1" min="1" max="{{ produto.estoque }}">
-                <button type="submit" class="btn">Adicionar ao Carrinho</button>
-            </form>
-        </div>
+<div class="container produto-detalhe-container">
+    
+    <div class="produto-imagens">
+        {% with produto.imagens.first as primeira_imagem %}
+            <div class="imagem-principal" style="margin-bottom: 1rem;">
+                {% if primeira_imagem %}
+                    <img id="imagem-principal-produto" src="{{ primeira_imagem.imagem.url }}" alt="{{ produto.nome }}" >
+                {% else %}
+                    <img id="imagem-principal-produto" src="{% static 'app_eSports/images/placeholder.jpg' %}" alt="Imagem padrão" >
+                {% endif %}
+            </div>
+        {% endwith %}
+        
+        {% if produto.imagens.all|length > 1 %}
+            <div class="thumbnails-grid">
+                {% for img in produto.imagens.all %}
+                    <img src="{{ img.imagem.url }}" alt="{{ img.legenda|default:produto.nome }}" 
+                         class="thumbnail-item"
+                         onclick="mudarImagemPrincipal('{{ img.imagem.url }}')">
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
+
+    <div class="produto-info">
+        <h2>{{ produto.nome }}</h2>
+        
+        <div id="produto-preco-bloco" class="produto-preco-bloco">
+            {% with produto.variacoes.first as v %} {% if v %}
+                    {% if v.porcentagem_off > 0 %}
+                    <s class="preco-antigo">R$ {{ v.preco_antigo|floatformat:2 }}</s>
+                    {% else %}
+                    <s class="preco-antigo" style="visibility: hidden;">R$ 0,00</s> 
+                    {% endif %}
+                    
+                    <div class="preco-atual-container">
+                        <span class="preco-atual">
+                            R$ {{ v.preco|floatformat:2 }}
+                        </span>
+                        {% if v.porcentagem_off > 0 %}
+                        <span class="preco-desconto">{{ v.porcentagem_off }}% OFF</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if v.max_parcelas_sem_juros > 1 %}
+                    <span class="preco-parcelas">
+                        em {{ v.max_parcelas_sem_juros }}x R$ {{ v.valor_parcela|floatformat:2 }} sem juros
+                    </span>
+                    {% endif %}
+
+                    {% if v.frete_gratis %}
+                    <span class="frete-gratis">
+                        Frete grátis <i class="fas fa-bolt"></i>
+                    </span>
+                    {% endif %}
+
+                {% else %}
+                    <p class="produto-preco-display">Indisponível</p>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <p class="produto-descricao">{{ produto.descricao }}</p>
+
+        {% if user.is_authenticated %}
+            <form action="{% url 'adicionar_ao_carrinho' %}" method="post" id="form-add-carrinho">
+                {% csrf_token %}
+                
+                {% if produto.variacoes.all %}
+                <div class="form-group">
+                    <label for="variacao">Escolha a Variação:</label>
+                    <select name="variacao_id" id="variacao" required class="form-control" onchange="atualizarPreco(this)">
+                        <option value="">Selecione...</option>
+                        
+                        {% for variacao in produto.variacoes.all %}
+                            <option value="{{ variacao.id }}" 
+                                    data-preco="{{ variacao.preco|floatformat:2 }}" 
+                                    data-estoque="{{ variacao.estoque }}"
+                                    data-preco-antigo="{{ variacao.preco_antigo|floatformat:2 }}"
+                                    data-porcentagem-off="{{ variacao.porcentagem_off }}"
+                                    data-parcelas="{{ variacao.max_parcelas_sem_juros }}"
+                                    data-valor-parcela="{{ variacao.valor_parcela|floatformat:2 }}"
+                                    data-frete-gratis="{{ variacao.frete_gratis|yesno:'true,false' }}"
+                                    {% if variacao.estoque <= 0 %}disabled{% endif %}>
+                                
+                                {{ variacao.nome }} 
+                                {% if variacao.estoque > 0 %}(R$ {{ variacao.preco }}){% else %}(Esgotado){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small id="variacao-estoque" class="form-text text-muted"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" name="quantidade" id="quantidade" value="1" min="1" class="form-control-sm">
+                </div>
+                
+                <button type="submit" class="btn btn-adicionar">Adicionar ao Carrinho</button>
+                {% else %}
+                <p style="color: var(--cor-texto-secundario);">Produto indisponível no momento.</p>
+                {% endif %}
+            </form>
+            
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-adicionar">
+                Faça login para comprar
+            </a>
+        {% endif %}
+        </div>
 </div>
+
+<script>
+    // Script para trocar a imagem (Seu script original)
+    function mudarImagemPrincipal(novaUrl) {
+        document.getElementById('imagem-principal-produto').src = novaUrl;
+    }
+
+    // Script REESCRITO para atualizar o BLOCO de preço
+    function atualizarPreco(selectElement) {
+        const precoBloco = document.getElementById('produto-preco-bloco');
+        const estoqueDisplay = document.getElementById('variacao-estoque');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        
+        if (selectedOption.value) {
+            // 1. Coletar todos os dados dos atributos data-*
+            const preco = selectedOption.getAttribute('data-preco');
+            const estoque = selectedOption.getAttribute('data-estoque');
+            const precoAntigo = selectedOption.getAttribute('data-preco-antigo');
+            const porcentagemOff = parseInt(selectedOption.getAttribute('data-porcentagem-off'), 10);
+            const parcelas = parseInt(selectedOption.getAttribute('data-parcelas'), 10);
+            const valorParcela = selectedOption.getAttribute('data-valor-parcela');
+            const freteGratis = selectedOption.getAttribute('data-frete-gratis') === 'true';
+
+            // 2. Construir o novo HTML
+            let html = '';
+
+            // Preço Antigo
+            if (porcentagemOff > 0) {
+                html += `<s class="preco-antigo">R$ ${precoAntigo}</s>`;
+            } else {
+                html += `<s class="preco-antigo" style="visibility: hidden;">R$ 0,00</s>`;
+            }
+
+            // Preço Atual + Desconto
+            html += `<div class="preco-atual-container">`;
+            html += `    <span class="preco-atual">R$ ${preco}</span>`;
+            if (porcentagemOff > 0) {
+                html += `    <span class="preco-desconto">${porcentagemOff}% OFF</span>`;
+            }
+            html += `</div>`;
+
+            // Parcelamento
+            if (parcelas > 1) {
+                html += `<span class="preco-parcelas">em ${parcelas}x R$ ${valorParcela} sem juros</span>`;
+            }
+
+            // Frete Grátis
+            if (freteGratis) {
+                html += `<span class="frete-gratis">Frete grátis <i class="fas fa-bolt"></i></span>`;
+            }
+            
+            // 3. Injetar o HTML no bloco
+            precoBloco.innerHTML = html;
+
+            // 4. Atualizar Estoque (Seu script original)
+            if (estoque > 0) {
+                estoqueDisplay.textContent = `${estoque} em estoque`;
+                document.getElementById('quantidade').max = estoque;
+            } else {
+                estoqueDisplay.textContent = 'Esgotado';
+            }
+        } else {
+            // 5. Resetar para o estado inicial (Se "Selecione..." for escolhido)
+            // (Isso usa as tags do Django para pegar o preço da PRIMEIRA variação)
+            {% with produto.variacoes.first as v %}
+                {% if v %}
+                    let htmlReset = '';
+                    {% if v.porcentagem_off > 0 %}
+                    htmlReset += `<s class="preco-antigo">R$ {{ v.preco_antigo|floatformat:2 }}</s>`;
+                    {% else %}
+                    htmlReset += `<s class="preco-antigo" style="visibility: hidden;">R$ 0,00</s>`;
+                    {% endif %}
+                    
+                    htmlReset += `<div class="preco-atual-container">`;
+                    htmlReset += `    <span class="preco-atual">R$ {{ v.preco|floatformat:2 }}</span>`;
+                    {% if v.porcentagem_off > 0 %}
+                    htmlReset += `    <span class="preco-desconto">{{ v.porcentagem_off }}% OFF</span>`;
+                    {% endif %}
+                    htmlReset += `</div>`;
+                    
+                    {% if v.max_parcelas_sem_juros > 1 %}
+                    htmlReset += `<span class="preco-parcelas">em {{ v.max_parcelas_sem_juros }}x R$ {{ v.valor_parcela|floatformat:2 }} sem juros</span>`;
+                    {% endif %}
+                    
+                    {% if v.frete_gratis %}
+                    htmlReset += `<span class="frete-gratis">Frete grátis <i class="fas fa-bolt"></i></span>`;
+                    {% endif %}
+                    
+                    precoBloco.innerHTML = htmlReset;
+                {% else %}
+                    precoBloco.innerHTML = '<p class="produto-preco-display">Indisponível</p>';
+                {% endif %}
+            {% endwith %}
+            
+            estoqueDisplay.textContent = '';
+            document.getElementById('quantidade').max = '';
+        }
+    }
+</script>
 {% endblock %}
