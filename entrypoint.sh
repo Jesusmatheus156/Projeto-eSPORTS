@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+# 0. Instalação de segurança: Garante que os pacotes essenciais para o Django (como django-storages)
+# estejam disponíveis no ambiente de execução (runtime), corrigindo o ModuleNotFoundError.
+echo "Instalando requisitos essenciais em tempo de execução..."
+pip install -r requirements.txt
+
 # 1. Tenta criar o superusuário de forma não interativa.
-# Depende das variáveis DJANGO_SUPERUSER_USERNAME e DJANGO_SUPERUSER_PASSWORD
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
   echo "Criando superusuário com variáveis de ambiente..."
-  # O '|| true' impede que o erro de usuário existente pare o deploy
   python manage.py createsuperuser --noinput || true
 fi
 
