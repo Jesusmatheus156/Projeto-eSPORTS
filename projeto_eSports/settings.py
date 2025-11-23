@@ -38,12 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app_eSports',
+    
+    # CKEditor e Uploads
     'ckeditor',
-    'ckeditor_uploader',
+    'ckeditor_uploader', # Necessário para o recurso de upload do editor
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    
+    # WhiteNoise deve vir ANTES de SessionMiddleware e CommonMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,8 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app_eSports.middleware.VisitCounterMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # A linha 'django.contrib.sessions.middleware.SessionMiddleware' duplicada foi removida
 ]
 
 ROOT_URLCONF = 'projeto_eSports.urls'
@@ -99,7 +104,7 @@ if os.environ.get('DATABASE_URL'):
     # Garante o engine correto no Render
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
-# A LÓGICA DE MIGRAÇÃO E COLLECTSTATIC FOI MOVIDA PARA entrypoint.sh
+# A LÓGICA DE MIGRAÇÃO E COLLECTSTATIC FOI MOVIDA PARA o Start Command no Render
 # ----------------------------------------------------
 
 # Password validation
@@ -131,15 +136,41 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Configuração de Estáticos
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # O diretório que collectstatic usa
+# ----------------------------------------------------
+## 📂 Static Files (CSS, JS, Images)
+# ----------------------------------------------------
 
-# Configuração WhiteNoise para otimizar arquivos estáticos
+# URL base para arquivos estáticos
+STATIC_URL = 'static/'
+
+# Diretório de destino para 'python manage.py collectstatic'
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
+
+# Configuração WhiteNoise para otimizar arquivos estáticos em produção
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 
-# Configuração de Mídia (para upload de usuários)
-# O Render NÃO serve arquivos MEDIA por padrão. 
-# Você DEVE usar um serviço de terceiros (como AWS S3, que requer django-storages).
-MEDIA_URL = 'media/'
+# ----------------------------------------------------
+## 🖼️ Media Files (User Uploads) & CKEditor
+# ----------------------------------------------------
+
+# URL para arquivos de mídia (uploads de usuário)
+MEDIA_URL = '/media/'
+
+# Diretório local para uploads (não persistente no Render sem S3/Cloud Storage)
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Configuração obrigatória do CKEditor para o caminho de upload
+CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
+
+# Configuração opcional do CKEditor para personalizar a barra de ferramentas, etc.
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
