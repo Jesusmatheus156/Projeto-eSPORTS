@@ -51,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app_eSports.middleware.VisitCounterMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 ROOT_URLCONF = 'projeto_eSports.urls'
