@@ -4,7 +4,6 @@ Django settings for projeto_eSports project.
 
 from pathlib import Path
 import os
-import sys
 import dj_database_url # Importado para ler a URL do banco
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -98,46 +97,7 @@ if os.environ.get('DATABASE_URL'):
     # Garante o engine correto no Render
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
-    # =========================================================
-    # SOLUÇÃO PARA PLANO GRATUITO RENDER (Sem Shell ou Pre-Deploy)
-    # Roda Migrações e Collectstatic no Gunicorn
-    # =========================================================
-
-    # Executa apenas se estivermos em um processo de servidor (Gunicorn)
-    if 'gunicorn' in sys.argv[0] or 'collectstatic' in sys.argv[0]:
-        try:
-            from django.db.utils import ProgrammingError
-            from django.core.management import call_command
-            
-            # Rodar Migrações
-            print("Executando: python manage.py migrate --noinput")
-            call_command('migrate', interactive=False)
-            
-            # Rodar CollectStatic
-            print("Executando: python manage.py collectstatic --noinput")
-            call_command('collectstatic', interactive=False)
-
-            # Lógica para Criação Automática de Superusuário (se as V.E. existirem)
-            if os.environ.get('DJANGO_SUPERUSER_USERNAME'):
-                from django.contrib.auth import get_user_model
-                User = get_user_model()
-                username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
-                email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
-                password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
-                
-                if not User.objects.filter(username=username).exists():
-                    print(f"Criando Superusuário {username} via settings.py...")
-                    User.objects.create_superuser(username=username, email=email, password=password)
-                    print("Superusuário criado com sucesso.")
-            
-        except ProgrammingError:
-            # Isso captura o erro se o comando 'migrate' não tiver rodado e for chamado
-            # A lógica de call_command dentro do try/except deve resolver isso.
-            pass
-        except Exception as e:
-            # Captura outros erros inesperados durante a inicialização
-            print(f"Erro durante a inicialização do Django no Render: {e}")
-
+# A LÓGICA DE MIGRAÇÃO E COLLECTSTATIC FOI MOVIDA PARA entrypoint.sh
 # ----------------------------------------------------
 
 # Password validation
@@ -173,10 +133,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Configuração de estáticos para produção no Render
-# BASE_DIR será usado para buscar os arquivos estáticos
+# STATIC_ROOT define onde o collectstatic deve colocar os arquivos
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    # Adicione aqui caminhos extras se necessário
+    # Se você tiver pastas estáticas específicas fora dos apps, coloque-as aqui
 ]
 
 # Default primary key field type
