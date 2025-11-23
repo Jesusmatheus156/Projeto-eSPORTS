@@ -1,14 +1,9 @@
-"""
-Django settings for projeto_eSports project.
-"""
-
 from pathlib import Path
 import os
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Segurança
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'django-insecure-slqd-#1*$2(13^#!o7r9u*@gpuxdes1jck_2ecvbze-w040rnt'
@@ -25,7 +20,6 @@ ALLOWED_HOSTS = [
     'www.reisdatorre.site',
 ]
 
-# Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,18 +30,16 @@ INSTALLED_APPS = [
 
     'app_eSports',
 
-    # CKEditor
     'ckeditor',
     'ckeditor_uploader',
 
-    # Uploads externos (S3, etc)
-    'django_storages',
+    # CORRETO
+    'storages',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
-    # WhiteNoise antes dos middlewares padrões
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,9 +73,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projeto_eSports.wsgi.application'
 
-# ------------------------
-# Banco de dados
-# ------------------------
+# ---------------------------------------
+# BANCO DE DADOS
+# ---------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -98,10 +90,9 @@ if os.environ.get('DATABASE_URL'):
     )
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
-
-# ------------------------
-# Validação de senha
-# ------------------------
+# ---------------------------------------
+# SENHAS
+# ---------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -109,35 +100,27 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# ------------------------
-# Internacionalização
-# ------------------------
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-
-# ------------------------
-# Arquivos Estáticos — WhiteNoise
-# ------------------------
+# ---------------------------------------
+# STATICFILES (Render + WhiteNoise)
+# ---------------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
-# ------------------------
-# Arquivos de Mídia
-# ------------------------
+# ---------------------------------------
+# MEDIA
+# ---------------------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
-# ------------------------
-# CKEditor
-# ------------------------
+# ---------------------------------------
+# CKEDITOR
+# ---------------------------------------
 CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
 
 CKEDITOR_CONFIGS = {
@@ -148,13 +131,11 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-
-# ------------------------
-# Superusuário via Render
-# ------------------------
+# ---------------------------------------
+# SUPERUSER AUTOMÁTICO NO RENDER
+# ---------------------------------------
 DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL')
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
