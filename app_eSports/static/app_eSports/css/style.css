@@ -65,9 +65,20 @@ header nav { display: flex; justify-content: space-between; align-items: center;
 .header-icons a { color: var(--cor-texto-principal); font-size: 1.2rem; transition: color 0.3s ease, transform 0.2s ease; padding: 0.3rem; }
 .header-icons a:hover { color: var(--cor-amarelo-hover); transform: scale(1.1); text-shadow: 0 0 8px rgba(255, 204, 0, 0.6); }
 
-/* =================================
-   FORMULÁRIO DE PESQUISA (HEADER) - EFEITO EXPANDIR REFINADO
-   ================================= */
+/* NOVO: Ícone de menu hambúrguer escondido no desktop */
+.menu-toggle {
+    display: none;
+    font-size: 1.8rem;
+    color: var(--cor-texto-principal);
+    cursor: pointer;
+    z-index: 1001; /* Garante que esteja acima do conteúdo */
+    padding: 0.3rem;
+    transition: color 0.3s ease;
+}
+.menu-toggle:hover {
+    color: var(--cor-amarelo-hover);
+}
+
 .search-container {
     position: relative;
     display: flex;
@@ -833,4 +844,147 @@ footer { background-color: var(--cor-fundo-medio); padding-top: 3rem; margin-top
     width: 100%;
     height: 100%;
     border: 0; /* Remove borda padrão do iframe */
+}
+
+/* =================================
+    RESPONSIVIDADE (MOBILE)
+    ================================= */
+
+@media (max-width: 900px) {
+    /* 1. Reset Body Zoom e Container Padding */
+    body {
+        zoom: 1; 
+    }
+    .container {
+        padding: 2rem 1rem;
+    }
+    .logo img {
+        height: 100px; /* Logo menor no mobile */
+    }
+
+    /* 2. Header: Apenas logo e toggle no topo */
+    header nav {
+        flex-wrap: nowrap; /* Impede que elementos caiam para a linha de baixo no topo */
+        padding: 0; /* Remove padding lateral no nav, deixando no header */
+    }
+    
+    /* 3. Oculta todos os elementos de navegação e ícones */
+    .nav-links,
+    .header-icons {
+        display: none; 
+    }
+    
+    /* 4. Mostra o ícone de toggle (Hambúrguer) */
+    .menu-toggle {
+        display: block;
+    }
+    
+    /* 5. Menu Aberto: Estilo Full-Screen/Dropdown (Requer JS para adicionar a classe 'menu-open' ao <nav>) */
+    /* Assumimos que o JS adiciona a classe 'menu-open' ao elemento <nav> */
+    header nav.menu-open {
+        flex-direction: column; /* Faz o nav ser uma coluna */
+        align-items: flex-start; /* Alinha o conteúdo à esquerda */
+    }
+
+    /* Exibe e estiliza os links em coluna */
+    header nav.menu-open .nav-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+        margin-top: 1rem;
+        border-top: 1px solid var(--cor-bordas);
+    }
+    .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--cor-bordas);
+    }
+    .nav-links a {
+        padding: 1rem;
+        font-size: 1.2rem;
+        width: 100%;
+        display: block;
+        text-align: left;
+        border-bottom: none; /* Remove a linha hover de desktop */
+    }
+    .nav-links a::after {
+        display: none; /* Remove a animação do sublinhado */
+    }
+
+    /* Exibe e estiliza os ícones em coluna */
+    header nav.menu-open .header-icons {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 1rem 1.5rem;
+        gap: 1.5rem;
+        background-color: var(--cor-fundo-medio); /* Fundo sutil para separar */
+    }
+    .header-icons a {
+        padding: 0;
+        font-size: 1.5rem;
+    }
+
+    /* 6. Ajuste no Formulário de Pesquisa (Search Container) dentro do Menu */
+    .search-container {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    .search-container.active .search-form {
+        /* Desativa a animação de expansão em mobile, sempre visível/max-width */
+        width: 100%;
+        visibility: visible;
+        position: relative;
+        transform: none;
+        top: auto;
+        right: auto;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        transition: none;
+        height: auto;
+    }
+    .search-container.active .search-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        opacity: 1;
+        background-color: var(--cor-fundo-escuro);
+        border: 1px solid var(--cor-bordas);
+        border-radius: var(--raio-borda);
+        font-size: 1rem;
+    }
+    .search-container.active .search-submit {
+        display: none; /* Oculta o botão de submit móvel (já feito antes, mas reforçando) */
+    }
+    .search-container .search-toggle-icon {
+        /* Oculta o ícone de toggle do search em mobile para não duplicar o campo de busca */
+        display: none;
+    }
+    .search-container .search-form {
+        width: 100%;
+        visibility: visible;
+        position: relative;
+        transform: none;
+        top: auto;
+        right: auto;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        transition: none;
+        height: auto;
+        display: flex;
+    }
+    .search-form .search-input {
+        width: 100%;
+        opacity: 1;
+        padding: 0.8rem 1rem;
+        background-color: var(--cor-fundo-escuro);
+        border: 1px solid var(--cor-bordas);
+        border-radius: var(--raio-borda);
+        font-size: 1rem;
+    }
+    .search-form .search-submit {
+        display: none;
+    }
 }
