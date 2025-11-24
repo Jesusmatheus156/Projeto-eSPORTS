@@ -33,13 +33,15 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
 
-    # CORRETO
-    'storages',
+    # CLOUDINARY
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
+    # WHITENOISE PARA STATICFILES
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -73,9 +75,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projeto_eSports.wsgi.application'
 
-# ---------------------------------------
+# ---------------------------
 # BANCO DE DADOS
-# ---------------------------------------
+# ---------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -90,9 +92,9 @@ if os.environ.get('DATABASE_URL'):
     )
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
-# ---------------------------------------
-# SENHAS
-# ---------------------------------------
+# ---------------------------
+# VALIDADORES
+# ---------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -105,22 +107,24 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-# ---------------------------------------
-# STATICFILES (Render + WhiteNoise)
-# ---------------------------------------
+# ---------------------------
+# ARQUIVOS ESTÁTICOS (STATIC)
+# ---------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise serve os STATICFILES
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ---------------------------------------
-# MEDIA
-# ---------------------------------------
+# ---------------------------
+# MEDIA (AGORA NO CLOUDINARY)
+# ---------------------------
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
-# ---------------------------------------
+# ---------------------------
 # CKEDITOR
-# ---------------------------------------
+# ---------------------------
 CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
 
 CKEDITOR_CONFIGS = {
@@ -131,9 +135,9 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-# ---------------------------------------
-# SUPERUSER AUTOMÁTICO NO RENDER
-# ---------------------------------------
+# ---------------------------
+# SUPERUSER AUTOMÁTICO
+# ---------------------------
 DJANGO_SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 DJANGO_SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 DJANGO_SUPERUSER_EMAIL = os.environ.get('DJANGO_SUPERUSER_EMAIL')
