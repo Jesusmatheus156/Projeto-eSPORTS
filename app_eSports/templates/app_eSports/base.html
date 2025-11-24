@@ -109,37 +109,78 @@
         </div>
     </footer>
 
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const searchContainer = document.querySelector('.search-container');
         const searchToggle = document.getElementById('search-toggle');
         const searchForm = document.getElementById('search-form');
         const searchInput = searchForm.querySelector('.search-input');
+        
+        // --- NOVO: Lógica do Menu Mobile ---
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.querySelector('header nav');
 
-        if (searchToggle && searchForm && searchContainer) { 
-            searchToggle.addEventListener('click', (e) => {
-                e.preventDefault(); 
+        if (menuToggle && nav) {
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('menu-open');
                 
-                // Adiciona/remove 'active' no container PAI
-                searchContainer.classList.toggle('active'); 
-                
-                if (searchContainer.classList.contains('active')) {
-                    // Dá um pequeno tempo para a transição começar antes de focar
-                    setTimeout(() => searchInput.focus(), 100); 
+                // Opcional: Altera o ícone de hambúrguer (fa-bars) para X (fa-times)
+                const toggleIcon = menuToggle.querySelector('i');
+                if (nav.classList.contains('menu-open')) {
+                    toggleIcon.classList.remove('fa-bars');
+                    toggleIcon.classList.add('fa-times');
                 } else {
-                     searchInput.value = ''; // Limpa o campo ao fechar
+                    toggleIcon.classList.remove('fa-times');
+                    toggleIcon.classList.add('fa-bars');
+                }
+                
+                // Fecha a pesquisa se o menu principal for aberto (opcional)
+                if (searchContainer && searchContainer.classList.contains('active')) {
+                     searchContainer.classList.remove('active');
                 }
             });
         }
         
-        // Fecha se clicar fora
+        // --- Lógica do Formulário de Pesquisa (Adaptada) ---
+        if (searchToggle && searchForm && searchContainer) { 
+            searchToggle.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                
+                // Verifica se está em mobile (menu-open) e se sim, não abre o search toggle de desktop
+                if (window.innerWidth > 900) { 
+                    searchContainer.classList.toggle('active'); 
+                    
+                    if (searchContainer.classList.contains('active')) {
+                        setTimeout(() => searchInput.focus(), 100); 
+                    } else {
+                         searchInput.value = ''; 
+                    }
+                }
+                // Em mobile, o campo de busca sempre fica visível dentro do menu-open, então o toggle não faz nada.
+            });
+        }
+        
+        // Fecha se clicar fora (Desktop Search)
         document.addEventListener('click', (e) => {
-            if (searchContainer && !searchContainer.contains(e.target) && searchContainer.classList.contains('active')) {
+            if (window.innerWidth > 900 && searchContainer && !searchContainer.contains(e.target) && searchContainer.classList.contains('active')) {
                  searchContainer.classList.remove('active');
-                 searchInput.value = ''; // Limpa o campo
+                 searchInput.value = '';
             }
         });
+        
+        // Fecha o menu principal se o usuário clicar em um link (para uma SPA/site de página única)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('menu-open')) {
+                    nav.classList.remove('menu-open');
+                    menuToggle.querySelector('i').classList.remove('fa-times');
+                    menuToggle.querySelector('i').classList.add('fa-bars');
+                }
+            });
+        });
     });
-    </script>
+</script>
+    
+    
 </body>
 </html>
